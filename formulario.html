@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Necesidades Estadísticas</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4c51bf',
+            primaryLight: '#667eea',
+            secondary: '#38b2ac'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    
+    .loading {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-slate-200 flex justify-center items-start p-6">
+
+  <div class="w-full max-w-4xl bg-white rounded-xl shadow-xl p-8">
+
+    <!-- ENCABEZADO -->
+    <header class="text-center mb-8">
+      <h1 class="text-3xl font-extrabold text-primary">
+        NECESIDADES ESTADÍSTICAS NO SATISFECHAS
+      </h1>
+      <p class="text-gray-600 mt-2">
+        Registro de demandas de información estadística para la planificación - Alcaldia de la Ceja del Tambo
+      </p>
+    </header>
+
+    <!-- FORMULARIO -->
+    <form id="statisticalNeedForm" class="space-y-6">
+
+      <!-- CONTACTO -->
+      <section>
+        <h2 class="text-lg font-semibold text-secondary mb-4">Información de Contacto</h2>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <input 
+              required 
+              name="nombre" 
+              placeholder="Nombre completo"
+              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
+              autocomplete="name">
+            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
+          </div>
+
+          <div>
+            <input 
+              required 
+              name="organizacion" 
+              placeholder="Organización / Entidad"
+              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
+              autocomplete="organization">
+            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
+          </div>
+
+          <div>
+            <input 
+              required 
+              type="email" 
+              name="email" 
+              placeholder="Correo electrónico"
+              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
+              autocomplete="email">
+            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
+          </div>
+
+          <div>
+            <input 
+              name="telefono" 
+              placeholder="Teléfono de contacto"
+              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
+              autocomplete="tel">
+            <p class="text-xs text-gray-500 mt-1">Opcional</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- REQUERIMIENTO -->
+      <section>
+        <h2 class="text-lg font-semibold text-secondary mb-4">Requerimiento Estadístico</h2>
+
+        <div class="mb-4">
+          <input 
+            required 
+            name="nombreRequerimiento"
+            placeholder="Nombre del requerimiento / título"
+            class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
+          <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
+        </div>
+
+        <div class="mb-4">
+          <textarea 
+            required 
+            name="descripcion" 
+            rows="4"
+            placeholder="Descripción detallada de la necesidad estadística"
+            class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"></textarea>
+          <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4">
+          <div>
+            <select 
+              required 
+              name="periodicidad" 
+              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
+              <option value="">Seleccione periodicidad</option>
+              <option value="Anual">Anual</option>
+              <option value="Semestral">Semestral</option>
+              <option value="Trimestral">Trimestral</option>
+              <option value="Mensual">Mensual</option>
+              <option value="Otra">Otra</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
+          </div>
+
+          <div>
+            <select 
+              required 
+              name="cobertura" 
+              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
+              <option value="">Cobertura geográfica</option>
+              <option value="Nacional">Nacional</option>
+              <option value="Departamental">Departamental</option>
+              <option value="Municipal">Municipal</option>
+              <option value="Veredal">Veredal</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
+          </div>
+
+          <div>
+            <input 
+              required 
+              name="usoPrincipal"
+              placeholder="Uso principal"
+              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
+            <p class="text-xs text-gray-500 mt-1">Ej: Políticas, regulación</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOTÓN -->
+      <button 
+        id="submitButton"
+        type="submit"
+        class="w-full bg-primary hover:bg-primaryLight text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2">
+        <span id="buttonText">Guardar Requerimiento</span>
+        <span id="buttonSpinner" class="spinner hidden"></span>
+      </button>
+    </form>
+
+    <!-- MENSAJES -->
+    <div class="mt-6 space-y-3">
+      <div 
+        id="successMessage"
+        class="hidden text-green-700 bg-green-100 border border-green-300 p-4 rounded-lg animate-fadeIn">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span class="font-semibold">¡Registro guardado correctamente!</span>
+        </div>
+        <p class="text-sm mt-1 ml-7">Sus datos han sido enviados exitosamente.</p>
+      </div>
+
+      <div 
+        id="errorMessage"
+        class="hidden text-red-700 bg-red-100 border border-red-300 p-4 rounded-lg animate-fadeIn">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+          <span class="font-semibold">Error al guardar el registro</span>
+        </div>
+        <p id="errorDetails" class="text-sm mt-1 ml-7">Por favor, intente nuevamente.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // URL de tu Web App de Google Apps Script
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwmXaqsyZc6bUWvynNxQQiuOTEmMnXngjnwU2KZb60aYSzjgU00aP6O6Xea0NsjLgZ1/exec";
+
+    // Referencias a elementos del DOM
+    const form = document.getElementById("statisticalNeedForm");
+    const submitButton = document.getElementById("submitButton");
+    const buttonText = document.getElementById("buttonText");
+    const buttonSpinner = document.getElementById("buttonSpinner");
+    const successMessage = document.getElementById("successMessage");
+    const errorMessage = document.getElementById("errorMessage");
+    const errorDetails = document.getElementById("errorDetails");
+
+    // Manejador del envío del formulario
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Ocultar mensajes previos
+      successMessage.classList.add("hidden");
+      errorMessage.classList.add("hidden");
+
+      // Mostrar estado de carga
+      submitButton.classList.add("loading");
+      buttonText.textContent = "Enviando...";
+      buttonSpinner.classList.remove("hidden");
+
+      // Recopilar datos del formulario
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      console.log("Enviando datos:", data);
+
+      try {
+        // Enviar datos a Google Apps Script
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+          mode: 'no-cors' // Importante para evitar problemas de CORS con Google Apps Script
+        });
+
+        // Nota: con mode: 'no-cors' no podemos leer la respuesta
+        // Por lo tanto, asumimos éxito si no hay error de red
+        
+        // Mostrar mensaje de éxito
+        successMessage.classList.remove("hidden");
+        
+        // Limpiar formulario
+        form.reset();
+        
+        // Scroll al mensaje de éxito
+        successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Ocultar mensaje después de 5 segundos
+        setTimeout(() => {
+          successMessage.classList.add("hidden");
+        }, 5000);
+
+      } catch (err) {
+        console.error("Error:", err);
+        
+        // Mostrar mensaje de error
+        errorMessage.classList.remove("hidden");
+        errorDetails.textContent = err.message || "Error de conexión. Verifique su conexión a internet.";
+        
+        // Scroll al mensaje de error
+        errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } finally {
+        // Restaurar estado del botón
+        submitButton.classList.remove("loading");
+        buttonText.textContent = "Guardar Requerimiento";
+        buttonSpinner.classList.add("hidden");
+      }
+    });
+
+    // Validación en tiempo real del email
+    const emailInput = form.querySelector('input[name="email"]');
+    emailInput.addEventListener('blur', function() {
+      if (this.value && !this.validity.valid) {
+        this.classList.add('border-red-500');
+      } else {
+        this.classList.remove('border-red-500');
+      }
+    });
+  </script>
+
+</body>
+</html>
