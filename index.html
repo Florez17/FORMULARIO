@@ -3,304 +3,1011 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Necesidades Estadísticas</title>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#4c51bf',
-            primaryLight: '#667eea',
-            secondary: '#38b2ac'
-          }
-        }
-      }
-    }
-  </script>
-
+  <title>Demandas de Información Estadística No Satisfecha · Alcaldía La Ceja del Tambo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    
-    .loading {
-      pointer-events: none;
-      opacity: 0.6;
+    :root {
+      --ink: #111827;
+      --muted: #6B7280;
+      --line: #E5E7EB;
+      --bg: #F9FAFB;
+      --white: #ffffff;
+      --accent: #1D4ED8;
+      --accent-light: #DBEAFE;
+      --accent-mid: #3B82F6;
+      --success-light: #D1FAE5;
+      --error: #DC2626;
+      --error-light: #FEE2E2;
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
     }
-    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--white);
+      border-bottom: 2px solid var(--accent);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .logo-slot {
+      width: 72px; height: 72px;
+      /*border: 2px dashed #CBD5E1;*/
+      border-radius: 10px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px; flex-shrink: 0;
+      background: #F8FAFC;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative; overflow: hidden;
+    }
+    /*.logo-slot:hover { border-color: var(--accent-mid); background: var(--accent-light); }*/
+    .logo-slot .slot-icon { width: 22px; height: 22px; color: #94A3B8; pointer-events: none; }
+    .logo-slot .slot-text { font-size: .58rem; color: #94A3B8; text-align: center; line-height: 1.3; pointer-events: none; }
+    .logo-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+    #logoInput { display: none; }
+    .header-text { flex: 1; }
+    .header-text h1 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; line-height: 1.3; }
+    .header-text p { font-size: .78rem; color: var(--muted); margin-top: 3px; }
+    .code-badge {
+      margin-left: auto;
+      background: var(--accent-light); color: var(--accent);
+      font-size: .7rem; font-weight: 600;
+      padding: 4px 10px; border-radius: 20px;
+      letter-spacing: .05em; white-space: nowrap;
+    }
+
+    /* ── PROGRESS ── */
+    .progress-bar-wrap { background: var(--line); height: 4px; position: sticky; top: 0; z-index: 100; }
+    .progress-bar-fill { height: 100%; background: var(--accent); transition: width .4s ease; width: 0%; }
+
+    main { max-width: 880px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-num {
+      background: var(--accent); color: #fff;
+      font-size: .75rem; font-weight: 700;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .section-heading h2 { font-family: 'DM Serif Display', serif; font-size: 1.05rem; }
+
+    /* ── CARD ── */
+    .card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 24px; }
+
+    /* ── GRID ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .col-full { grid-column: 1 / -1; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── FIELD ── */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field-label {
+      font-size: .78rem; font-weight: 600; color: var(--ink);
+      display: flex; align-items: flex-start; gap: 6px;
+    }
+    .field-num {
+      color: var(--accent); font-size: .7rem; font-weight: 700;
+      background: var(--accent-light); padding: 2px 5px; border-radius: 4px;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .required-star { color: var(--error); margin-left: 1px; }
+
+    /* ── TOOLTIP ── */
+    .tooltip-wrap {
+      position: relative; display: inline-flex;
+      align-items: center; margin-left: 4px; flex-shrink: 0; margin-top: 1px;
+    }
+    .tooltip-icon {
+      width: 15px; height: 15px;
+      background: #94A3B8; color: #fff;
+      border-radius: 50%; font-size: .65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: help; transition: background .15s; font-style: normal; user-select: none;
+    }
+    .tooltip-icon:hover { background: var(--accent); }
+    .tooltip-bubble {
+      display: none; position: absolute;
+      left: 50%; bottom: calc(100% + 8px);
+      transform: translateX(-50%);
+      background: #1E293B; color: #F1F5F9;
+      font-size: .72rem; font-weight: 400; line-height: 1.55;
+      padding: 10px 13px; border-radius: 8px;
+      width: 280px; z-index: 999; pointer-events: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    }
+    .tooltip-bubble::after {
+      content: ''; position: absolute;
+      top: 100%; left: 50%; transform: translateX(-50%);
+      border: 6px solid transparent; border-top-color: #1E293B;
+    }
+    .tooltip-wrap:hover .tooltip-bubble { display: block; }
+
+    /* ── INPUTS ── */
+    input[type="text"], input[type="email"], input[type="tel"],
+    input[type="date"], select, textarea {
+      width: 100%; padding: 10px 13px;
+      border: 1.5px solid var(--line); border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif; font-size: .875rem; color: var(--ink);
+      background: var(--white); transition: border-color .2s, box-shadow .2s;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--accent-mid);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; padding-right: 36px;
+    }
+
+    /* ── CONDITIONAL ── */
+    .conditional { display: none; }
+    .conditional.visible { display: flex; flex-direction: column; gap: 5px; }
+
+    /* ── CHECKBOXES ── */
+    .check-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .check-item {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--bg); border: 1.5px solid var(--line);
+      border-radius: 6px; padding: 6px 10px;
+      cursor: pointer; transition: all .15s; font-size: .8rem;
+    }
+    .check-item:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+    .check-item input { width: 14px; height: 14px; cursor: pointer; }
+    .check-item.checked { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 500; }
+
+    /* ── RADIO PILL ── */
+    .radio-inline { display: flex; gap: 10px; margin-top: 4px; }
+    .radio-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border: 1.5px solid var(--line);
+      border-radius: 20px; cursor: pointer; font-size: .85rem; transition: all .15s;
+    }
+    .radio-pill:hover { border-color: var(--accent-mid); }
+    .radio-pill input { display: none; }
+    .radio-pill.selected { border-color: var(--accent); background: var(--accent-light); color: var(--accent); font-weight: 500; }
+
+    /* ── PERSON BLOCK ── */
+    .person-block {
+      background: var(--bg); border: 1.5px solid var(--line);
+      border-radius: var(--radius); padding: 16px 18px; margin-top: 6px;
+    }
+    .person-block .grid-2 { gap: 14px; }
+    .person-block .sub-label { font-size: .74rem; font-weight: 500; color: var(--ink); }
+
+    /* ── INFO BOX ── */
+    .info-box {
+      background: var(--accent-light); border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 11px 15px; font-size: .8rem; color: var(--accent); margin-bottom: 24px;
+    }
+
+    /* ── SUBMIT ── */
+    .btn-submit {
+      width: 100%; background: var(--accent); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: .95rem; font-weight: 600;
+      padding: 14px; border: none; border-radius: var(--radius);
+      cursor: pointer; transition: background .2s, transform .1s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-submit:hover { background: #1e40af; }
+    .btn-submit:active { transform: scale(.99); }
+    .btn-submit:disabled { opacity: .6; pointer-events: none; }
     .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 1s linear infinite; display: none;
     }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── MESSAGES ── */
+    .message { display: none; border-radius: var(--radius); padding: 14px 16px; font-size: .875rem; margin-top: 16px; }
+    .message.show { display: flex; align-items: flex-start; gap: 10px; }
+    .message-success { background: var(--success-light); border: 1px solid #6ee7b7; color: #065f46; }
+    .message-error   { background: var(--error-light);   border: 1px solid #fca5a5; color: #7f1d1d; }
+    .message svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+
+    footer { text-align: center; padding: 24px; font-size: .75rem; color: var(--muted); border-top: 1px solid var(--line); }
   </style>
 </head>
+<body>
 
-<body class="min-h-screen bg-slate-200 flex justify-center items-start p-6">
-
-  <div class="w-full max-w-4xl bg-white rounded-xl shadow-xl p-8">
-
-    <!-- ENCABEZADO -->
-    <header class="text-center mb-8">
-      <h1 class="text-3xl font-extrabold text-primary">
-        NECESIDADES ESTADÍSTICAS NO SATISFECHAS
-      </h1>
-      <p class="text-gray-600 mt-2">
-        Registro de demandas de información estadística para la planificación - Alcaldia de la Ceja del Tambo
-      </p>
-    </header>
-
-    <!-- FORMULARIO -->
-    <form id="statisticalNeedForm" class="space-y-6">
-
-      <!-- CONTACTO -->
-      <section>
-        <h2 class="text-lg font-semibold text-secondary mb-4">Información de Contacto</h2>
-
-        <div class="grid md:grid-cols-2 gap-4">
-          <div>
-            <input 
-              required 
-              name="nombre" 
-              placeholder="Nombre completo"
-              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
-              autocomplete="name">
-            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
-          </div>
-
-          <div>
-            <input 
-              required 
-              name="organizacion" 
-              placeholder="Organización / Entidad"
-              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
-              autocomplete="organization">
-            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
-          </div>
-
-          <div>
-            <input 
-              required 
-              type="email" 
-              name="email" 
-              placeholder="Correo electrónico"
-              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
-              autocomplete="email">
-            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
-          </div>
-
-          <div>
-            <input 
-              name="telefono" 
-              placeholder="Teléfono de contacto"
-              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"
-              autocomplete="tel">
-            <p class="text-xs text-gray-500 mt-1">Opcional</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- REQUERIMIENTO -->
-      <section>
-        <h2 class="text-lg font-semibold text-secondary mb-4">Requerimiento Estadístico</h2>
-
-        <div class="mb-4">
-          <input 
-            required 
-            name="nombreRequerimiento"
-            placeholder="Nombre del requerimiento / título"
-            class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
-          <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
-        </div>
-
-        <div class="mb-4">
-          <textarea 
-            required 
-            name="descripcion" 
-            rows="4"
-            placeholder="Descripción detallada de la necesidad estadística"
-            class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition"></textarea>
-          <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-4">
-          <div>
-            <select 
-              required 
-              name="periodicidad" 
-              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
-              <option value="">Seleccione periodicidad</option>
-              <option value="Anual">Anual</option>
-              <option value="Semestral">Semestral</option>
-              <option value="Trimestral">Trimestral</option>
-              <option value="Mensual">Mensual</option>
-              <option value="Otra">Otra</option>
-            </select>
-            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
-          </div>
-
-          <div>
-            <select 
-              required 
-              name="cobertura" 
-              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
-              <option value="">Cobertura geográfica</option>
-              <option value="Nacional">Nacional</option>
-              <option value="Departamental">Departamental</option>
-              <option value="Municipal">Municipal</option>
-              <option value="Veredal">Veredal</option>
-            </select>
-            <p class="text-xs text-gray-500 mt-1">Campo obligatorio</p>
-          </div>
-
-          <div>
-            <input 
-              required 
-              name="usoPrincipal"
-              placeholder="Uso principal"
-              class="border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded p-3 w-full transition">
-            <p class="text-xs text-gray-500 mt-1">Ej: Políticas, regulación</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- BOTÓN -->
-      <button 
-        id="submitButton"
-        type="submit"
-        class="w-full bg-primary hover:bg-primaryLight text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2">
-        <span id="buttonText">Guardar Requerimiento</span>
-        <span id="buttonSpinner" class="spinner hidden"></span>
-      </button>
-    </form>
-
-    <!-- MENSAJES -->
-    <div class="mt-6 space-y-3">
-      <div 
-        id="successMessage"
-        class="hidden text-green-700 bg-green-100 border border-green-300 p-4 rounded-lg animate-fadeIn">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg>
-          <span class="font-semibold">¡Registro guardado correctamente!</span>
-        </div>
-        <p class="text-sm mt-1 ml-7">Sus datos han sido enviados exitosamente.</p>
-      </div>
-
-      <div 
-        id="errorMessage"
-        class="hidden text-red-700 bg-red-100 border border-red-300 p-4 rounded-lg animate-fadeIn">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-          </svg>
-          <span class="font-semibold">Error al guardar el registro</span>
-        </div>
-        <p id="errorDetails" class="text-sm mt-1 ml-7">Por favor, intente nuevamente.</p>
-      </div>
-    </div>
+<!-- ══ HEADER ══ -->
+<header class="site-header">
+  <div class="logo-slot">
+    <img src="logo.png" alt="Logo institucional">
   </div>
 
-  <!-- SCRIPT -->
-  <script>
-    // URL de tu Web App de Google Apps Script
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwmXaqsyZc6bUWvynNxQQiuOTEmMnXngjnwU2KZb60aYSzjgU00aP6O6Xea0NsjLgZ1/exec";
+  <div class="header-text">
+    <h1>Demandas de Información Estadística No Satisfecha</h1>
+    <p>Alcaldía de La Ceja del Tambo · Observatorio Municipal</p>
+  </div>
+  <div class="code-badge">DES-FM-039-V1</div>
+</header>
 
-    // Referencias a elementos del DOM
-    const form = document.getElementById("statisticalNeedForm");
-    const submitButton = document.getElementById("submitButton");
-    const buttonText = document.getElementById("buttonText");
-    const buttonSpinner = document.getElementById("buttonSpinner");
-    const successMessage = document.getElementById("successMessage");
-    const errorMessage = document.getElementById("errorMessage");
-    const errorDetails = document.getElementById("errorDetails");
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
 
-    // Manejador del envío del formulario
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+<main>
+  <div class="info-box">
+    Complete todos los campos obligatorios (<span style="color:var(--error);font-weight:700">*</span>).
+    Pase el cursor sobre el ícono <strong style="background:#94A3B8;color:#fff;border-radius:50%;display:inline-flex;width:14px;height:14px;align-items:center;justify-content:center;font-size:.6rem">?</strong> de cada campo para ver la instrucción oficial del formato. Los campos condicionales se habilitan automáticamente.
+  </div>
 
-      // Ocultar mensajes previos
-      successMessage.classList.add("hidden");
-      errorMessage.classList.add("hidden");
+  <form id="mainForm" novalidate>
 
-      // Mostrar estado de carga
-      submitButton.classList.add("loading");
-      buttonText.textContent = "Enviando...";
-      buttonSpinner.classList.remove("hidden");
+    <!-- ═══════ SECCIÓN 1 ═══════ -->
+    <div class="section-heading">
+      <div class="section-num">1</div>
+      <h2>Detección y Análisis de Requerimientos</h2>
+    </div>
 
-      // Recopilar datos del formulario
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+    <!-- 1.2 · 1.3 · 1.4 · 1.5 -->
+    <div class="card">
+      <div class="grid-2">
 
-      console.log("Enviando datos:", data);
+        <div class="field col-full">
+          <label class="field-label">
+            <span class="field-num">1.2</span>
+            Requerimiento de Información Estadística <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Escriba el nombre del indicador o requerimiento de información que se necesita y no ha sido satisfecho en su totalidad. Sea específico: incluya el fenómeno que desea medir y, si aplica, la población objetivo. Ej.: «Tasa de desempleo juvenil (14-28 años) a nivel municipal».</span>
+            </span>
+          </label>
+          <input type="text" name="requerimiento" placeholder="Nombre del indicador o requerimiento estadístico" required>
+        </div>
 
-      try {
-        // Enviar datos a Google Apps Script
-        const response = await fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data),
-          mode: 'no-cors' // Importante para evitar problemas de CORS con Google Apps Script
-        });
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.3</span>
+            Área Temática <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Defina el área temática o sectorial a la que pertenece el requerimiento. Algunos ejemplos: Mercado Laboral, Salud Pública, Educación, Seguridad, Medio Ambiente, Vivienda, Demografía, Desarrollo Económico, Movilidad, etc.</span>
+            </span>
+          </label>
+          <input type="text" name="area_tematica" placeholder="Ej. Mercado Laboral, Salud, Educación…" required>
+        </div>
 
-        // Nota: con mode: 'no-cors' no podemos leer la respuesta
-        // Por lo tanto, asumimos éxito si no hay error de red
-        
-        // Mostrar mensaje de éxito
-        successMessage.classList.remove("hidden");
-        
-        // Limpiar formulario
-        form.reset();
-        
-        // Scroll al mensaje de éxito
-        successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Ocultar mensaje después de 5 segundos
-        setTimeout(() => {
-          successMessage.classList.add("hidden");
-        }, 5000);
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.4</span>
+            Tipo de Requerimiento <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Seleccione el tipo de ajuste o necesidad estadística: a) Crear un nuevo agregado o indicador · b) Ampliar la cobertura geográfica de uno existente (ej.: bajar de nivel departamental a municipal) · c) Ampliar los temas o variables que cubre · d) Cambiar la frecuencia de publicación · e) Otro tipo no contemplado en la lista.</span>
+            </span>
+          </label>
+          <select name="tipo_requerimiento" id="tipo_requerimiento" required>
+            <option value="">Seleccione…</option>
+            <option value="a">a) Agregado estadístico o indicador</option>
+            <option value="b">b) Ampliación de cobertura geográfica</option>
+            <option value="c">c) Ampliación de cobertura temática</option>
+            <option value="d">d) Ajustes de frecuencia de difusión</option>
+            <option value="otro">e) Otro</option>
+          </select>
+        </div>
 
-      } catch (err) {
-        console.error("Error:", err);
-        
-        // Mostrar mensaje de error
-        errorMessage.classList.remove("hidden");
-        errorDetails.textContent = err.message || "Error de conexión. Verifique su conexión a internet.";
-        
-        // Scroll al mensaje de error
-        errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } finally {
-        // Restaurar estado del botón
-        submitButton.classList.remove("loading");
-        buttonText.textContent = "Guardar Requerimiento";
-        buttonSpinner.classList.add("hidden");
-      }
+        <div class="field conditional" id="cond_1_5">
+          <label class="field-label">
+            <span class="field-num">1.5</span>
+            Si es Otro, ¿Cuál? <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Dado que seleccionó «Otro» en el campo 1.4, describa aquí con precisión qué tipo de requerimiento estadístico es el que está formulando.</span>
+            </span>
+          </label>
+          <input type="text" name="tipo_otro" placeholder="Describa el tipo de requerimiento">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 1.6 · 1.7 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field col-full">
+          <label class="field-label">
+            <span class="field-num">1.6</span>
+            Descripción de la Información Estadística que Requiere <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Escriba de manera concisa la información requerida. Amplíe la descripción incluyendo: la unidad de medida (personas, hogares, porcentaje, toneladas…), el alcance o cobertura deseada, el período de referencia (anual, trimestral…) y cualquier especificación técnica relevante que ayude a entender la demanda.</span>
+            </span>
+          </label>
+          <textarea name="descripcion" rows="4" placeholder="Describa con precisión la información que necesita: qué mide, para qué población, en qué unidad de medida y con qué alcance territorial o temporal…" required></textarea>
+        </div>
+        <div class="field col-full">
+          <label class="field-label">
+            <span class="field-num">1.7</span>
+            Variables de la Información Estadística Solicitada
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Liste todas las variables que necesita para satisfacer el requerimiento. Las variables son características que se desean medir en la unidad de análisis. Ej.: edad, sexo, nivel educativo alcanzado, ingresos mensuales, zona (urbana/rural), condición de actividad económica, grupo étnico, etc. Sepárelas con comas.</span>
+            </span>
+          </label>
+          <textarea name="variables" rows="3" placeholder="Variable 1, Variable 2, Variable 3… (sepárelas con comas)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.8 · 1.9 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.8</span>
+            ¿Para qué se utilizará la información? <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Seleccione el uso principal que le dará a esta información: a) Análisis de contexto o diagnóstico territorial · b) Insumo para producir otras estadísticas derivadas · c) Diseñar, formular o hacer seguimiento a políticas públicas · d) Cumplir compromisos de reporte a organismos internacionales · e) Otro uso no listado.</span>
+            </span>
+          </label>
+          <select name="uso_informacion" id="uso_informacion" required>
+            <option value="">Seleccione…</option>
+            <option value="a">a) Análisis de contexto</option>
+            <option value="b">b) Producción de estadísticas</option>
+            <option value="c">c) Diseño, formulación o seguimiento de políticas</option>
+            <option value="d">d) Reportes Internacionales</option>
+            <option value="otro">e) Otro</option>
+          </select>
+        </div>
+        <div class="field conditional" id="cond_1_9">
+          <label class="field-label">
+            <span class="field-num">1.9</span>
+            Si es Otro, ¿Cuál? <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Dado que seleccionó «Otro» en el campo 1.8, describa aquí cuál será el uso específico que se le dará a esta información estadística.</span>
+            </span>
+          </label>
+          <input type="text" name="uso_otro" placeholder="Especifique el uso de la información">
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.10 · 1.11 · 1.12 · 1.13 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.10</span>
+            Posible Solución al Requerimiento <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Indique la vía más probable para satisfacer este requerimiento: aprovechar una operación estadística ya existente (ej.: incorporar variables a una encuesta en curso), aprovechar un registro administrativo disponible (ej.: registros del SISBÉN, RIPS, SIMAT), generar información completamente nueva, u otro mecanismo.</span>
+            </span>
+          </label>
+          <select name="posible_solucion" id="posible_solucion" required>
+            <option value="">Seleccione…</option>
+            <option value="aprovechamiento_oe">Aprovechamiento de una operación estadística</option>
+            <option value="aprovechamiento_ra">Aprovechamiento de un registro administrativo</option>
+            <option value="nueva_informacion">Generación de nueva información</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="field conditional" id="cond_1_11">
+          <label class="field-label">
+            <span class="field-num">1.11</span>
+            Si es Otro, ¿Cuál? <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Dado que seleccionó «Otro» en 1.10, describa aquí la posible solución de manera específica.</span>
+            </span>
+          </label>
+          <input type="text" name="solucion_otro" placeholder="Describa la posible solución">
+        </div>
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.12</span>
+            ¿Cómo se aprovecharía?
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Si la solución implica aprovechar algo existente, indique el mecanismo: incluir nuevas preguntas en una encuesta, usar un registro administrativo con ajuste de variables, combinar múltiples fuentes, etc. Seleccione el tipo de recurso a aprovechar.</span>
+            </span>
+          </label>
+          <select name="como_aprovecharia">
+            <option value="">Seleccione…</option>
+            <option value="oe">Aprovechamiento de una operación estadística</option>
+            <option value="ra">Aprovechamiento de un registro administrativo</option>
+            <option value="ni">Generación de nueva información</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.13</span>
+            ¿Cuáles?
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">De acuerdo con la opción seleccionada en 1.12, indique cuáles serían los recursos, fuentes u operaciones concretas que se aprovecharían. Ej.: «Encuesta Nacional de Hogares - GEIH (DANE)», «Registro SISBÉN IV», «Catastro municipal». Si seleccionó «Otro», especifíquelo.</span>
+            </span>
+          </label>
+          <input type="text" name="como_cuales" placeholder="Nombre la fuente o recurso concreto a aprovechar">
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.14 · 1.15 -->
+    <div class="card">
+      <div class="field">
+        <label class="field-label">
+          <span class="field-num">1.14</span>
+          Potencial Usuario de la Información Estadística
+          <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+            <span class="tooltip-bubble">Seleccione todos los tipos de actores que, además de usted, podrían utilizar esta información. Considerar los usuarios potenciales ayuda a priorizar la producción estadística según el alcance e impacto esperado del dato.</span>
+          </span>
+        </label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="organismos_int"> Organismos internacionales</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="presidencia"> Presidencia de la República</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="ministerios"> Ministerios</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="control"> Organismos de Control</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="entidades_nac"> Otras entidades del orden Nacional</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="territorial"> Entidades de orden Territorial</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="gremios"> Gremios</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="privadas"> Entidades privadas</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="dependencias"> Dependencias de la misma entidad</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="academia"> Academia</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="publico"> Público en General</label>
+          <label class="check-item"><input type="checkbox" name="usuarios[]" value="otro" id="chk_usuario_otro"> Otro</label>
+        </div>
+      </div>
+      <div class="conditional" id="cond_1_15" style="margin-top:16px">
+        <label class="field-label">
+          <span class="field-num">1.15</span>
+          Si es Otro, ¿Cuál o Cuáles?
+          <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+            <span class="tooltip-bubble">Dado que marcó «Otro» como usuario potencial, especifique aquí qué tipo de actor u organización adicional utilizaría esta información estadística.</span>
+          </span>
+        </label>
+        <input type="text" name="usuario_otro_desc" placeholder="Describa el otro tipo de usuario potencial">
+      </div>
+    </div>
+
+    <!-- 1.16 · 1.17 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.16</span>
+            Marco Normativo
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Seleccione el tipo de norma que sustenta o exige este requerimiento estadístico. Puede ser un tratado internacional, la Constitución Política, una Ley, un Decreto (nacional, departamental o municipal), una Resolución, Sentencias o Circulares. Seleccione «Ninguno» si no existe norma asociada.</span>
+            </span>
+          </label>
+          <select name="marco_normativo">
+            <option value="">Seleccione…</option>
+            <option>Acuerdos supranacionales</option>
+            <option>Disposiciones constitucionales</option>
+            <option>Ley</option>
+            <option>Decreto (nacional, departamental, municipal)</option>
+            <option>Resolución</option>
+            <option>Sentencias/Ordenanza/Circulares</option>
+            <option>Ley/Decreto/Resolución</option>
+            <option>Ninguno</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.17</span>
+            ¿Cuál es el Acto Administrativo o Acuerdo?
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Describa brevemente la norma indicando su nombre o número, el año de expedición y el artículo o capítulo que motiva este requerimiento. Ej.: «Decreto Municipal 0087 de 2021, Art. 12, numeral 4 – Plan de Desarrollo La Ceja 2020-2023».</span>
+            </span>
+          </label>
+          <input type="text" name="acto_administrativo" placeholder="Ej. Decreto 0087 de 2021, Art. 12">
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.18 · 1.19 · 1.20 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.18</span>
+            Principal Requerimiento que Satisface <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Seleccione el compromiso o instrumento de planificación que motiva principalmente esta demanda: un ODS (Objetivos de Desarrollo Sostenible), un requisito OCDE, el Plan Nacional de Desarrollo, un plan territorial o CONPES, una norma, un ente de control, etc. Si aplica más de uno, indique los adicionales en el campo 1.19.</span>
+            </span>
+          </label>
+          <select name="requerimiento_principal" id="req_principal" required>
+            <option value="">Seleccione…</option>
+            <option value="ods">a) Objetivos de Desarrollo Sostenible (ODS)</option>
+            <option value="ocde">b) OCDE</option>
+            <option value="int">c) Otros compromisos internacionales (CAN, CEPAL, etc.)</option>
+            <option value="pnd">d) Plan Nacional de Desarrollo</option>
+            <option value="cuentas">e) Cuentas económicas y macroeconómicas</option>
+            <option value="plan_sec">f) Plan sectorial, territorial o CONPES</option>
+            <option value="normativo">g) Requerimiento normativo</option>
+            <option value="control">h) Solicitud de entes de control</option>
+            <option value="institucional">i) Compromiso Institucional</option>
+            <option value="externo">j) Demanda usuario externo</option>
+            <option value="acuerdo_int">k) Acuerdo Internacional</option>
+            <option value="otro">l) Otro</option>
+            <option value="ninguno">m) Ninguno</option>
+          </select>
+        </div>
+        <div class="field conditional" id="cond_1_19">
+          <label class="field-label">
+            <span class="field-num">1.19</span>
+            Si hay Otro(s), ¿Cuál o Cuáles?
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Si el requerimiento está vinculado a más de un compromiso o instrumento de planificación, o si seleccionó «Otro», descríbalo(s) aquí con detalle.</span>
+            </span>
+          </label>
+          <input type="text" name="req_otro" placeholder="Describa el compromiso o instrumento adicional">
+        </div>
+        <div class="field conditional" id="cond_1_20">
+          <label class="field-label">
+            <span class="field-num">1.20</span>
+            Si es ODS/OCDE, ¿Cuál o Cuáles?
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Indique el número y nombre del ODS al que responde (Ej.: ODS 3 – Salud y bienestar, Meta 3.2: mortalidad infantil) o el nombre del indicador o compromiso OCDE específico.</span>
+            </span>
+          </label>
+          <input type="text" name="ods_ocde_cual" placeholder="Ej. ODS 3 – Salud y bienestar, Meta 3.2">
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.21 -->
+    <div class="card">
+      <div class="field">
+        <label class="field-label">
+          <span class="field-num">1.21</span>
+          ¿Cuál Entidad Considera que debe Producir la Información?
+          <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+            <span class="tooltip-bubble">Indique qué entidad pública o privada cree que debería generar esta información estadística. Si no lo tiene claro, escriba «N/A». Ej.: DANE, Secretaría de Salud Municipal, Departamento Nacional de Planeación (DNP), SENA, Min. de Educación, Alcaldía, etc.</span>
+          </span>
+        </label>
+        <input type="text" name="entidad_productora" placeholder="Ej. DANE, Secretaría de Salud Municipal, DNP… o N/A">
+      </div>
+    </div>
+
+    <!-- 1.22–1.26 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.22</span>
+            Nivel de Desagregación Geográfica <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Indique el nivel de detalle territorial con el que requiere la información, desde lo más amplio (Nacional) hasta lo más específico (Manzana, Segmento vial). Seleccione «No Aplica» si el fenómeno no tiene referencia territorial. Seleccione «Otra» si necesita un nivel no listado.</span>
+            </span>
+          </label>
+          <select name="desagregacion_geo" id="desag_geo" required>
+            <option value="">Seleccione…</option>
+            <option>Nacional</option>
+            <option>Regional</option>
+            <option>Departamental</option>
+            <option>Distrital</option>
+            <option>Localidad</option>
+            <option>Unidad de Planeamiento Zonal UPZ</option>
+            <option>Unidad de Planeamiento Rural UPR</option>
+            <option>Vereda</option>
+            <option>Barrio</option>
+            <option>Manzana</option>
+            <option>Segmento vial</option>
+            <option value="otra">Otra</option>
+            <option>No Aplica</option>
+          </select>
+        </div>
+        <div class="field conditional" id="cond_1_23">
+          <label class="field-label">
+            <span class="field-num">1.23</span>
+            Si es Otra, ¿Cuál?
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Dado que seleccionó «Otra» en 1.22, especifique aquí cuál es la unidad de desagregación geográfica que requiere. Ej.: «Centro poblado», «Zona industrial», «Sector catastral».</span>
+            </span>
+          </label>
+          <input type="text" name="desag_geo_otra" placeholder="Especifique la unidad geográfica">
+        </div>
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.24</span>
+            Nivel de Desagregación por Zona <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Indique si la información se requiere para la zona Urbana (centros poblados y ciudades, dentro del perímetro urbano), Rural (áreas dispersas fuera del perímetro), o si la necesita para Ambas zonas a la vez.</span>
+            </span>
+          </label>
+          <select name="desagregacion_zona" required>
+            <option value="">Seleccione…</option>
+            <option>Urbana</option>
+            <option>Rural</option>
+            <option>Ambas</option>
+          </select>
+        </div>
+        <div class="field col-full">
+          <label class="field-label">
+            <span class="field-num">1.25</span>
+            Nivel de Desagregación por Grupo Poblacional
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Marque las variables de clasificación con las que necesita que se presente la información. Sexo: hombre/mujer · Edad: grupos etarios · Grupo étnico: indígena, afrodescendiente, rom, raizal… · Discapacidad: personas con algún tipo de discapacidad · Estrato socioeconómico · Otro: cualquier variable no listada · Ninguno: si no requiere desagregación poblacional.</span>
+            </span>
+          </label>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" name="grupo_pob[]" value="sexo"> Sexo</label>
+            <label class="check-item"><input type="checkbox" name="grupo_pob[]" value="edad"> Edad</label>
+            <label class="check-item"><input type="checkbox" name="grupo_pob[]" value="etnico"> Grupo étnico</label>
+            <label class="check-item"><input type="checkbox" name="grupo_pob[]" value="discapacidad"> Discapacidad</label>
+            <label class="check-item"><input type="checkbox" name="grupo_pob[]" value="estrato"> Estrato</label>
+            <label class="check-item"><input type="checkbox" name="grupo_pob[]" value="otro" id="chk_grupo_pob_otro"> Otro</label>
+            <label class="check-item"><input type="checkbox" name="grupo_pob[]" value="ninguno"> Ninguno</label>
+          </div>
+        </div>
+        <div class="field conditional col-full" id="cond_1_26">
+          <label class="field-label">
+            <span class="field-num">1.26</span>
+            Si es Otro, ¿Cuál?
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Especifique el grupo poblacional adicional requerido. Si son varios, puede listarlos separados por comas. Ej.: «Jóvenes 14–28 años», «Víctimas del conflicto armado», «Migrantes venezolanos», «Trabajadores informales».</span>
+            </span>
+          </label>
+          <input type="text" name="grupo_pob_otro" placeholder="Especifique el grupo poblacional">
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.27 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">1.27</span>
+            Frecuencia de Difusión <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Indique con qué periodicidad necesita que esta información se publique o actualice. Considere la dinámica del fenómeno: los datos de movilidad podrían requerirse diariamente, mientras que los indicadores de pobreza pueden ser suficientes de forma anual. «Por evento» aplica cuando la información solo se necesita cuando ocurre un hecho específico.</span>
+            </span>
+          </label>
+          <select name="frecuencia" required>
+            <option value="">Seleccione…</option>
+            <option>Diaria</option>
+            <option>Semanal</option>
+            <option>Quincenal</option>
+            <option>Mensual</option>
+            <option>Bimestral</option>
+            <option>Trimestral</option>
+            <option>Cuatrimestral</option>
+            <option>Semestral</option>
+            <option>Anual</option>
+            <option>Bienal</option>
+            <option>Cuatrienal</option>
+            <option>Por evento</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.28 · 1.29 · 1.30 · 1.31 -->
+    <div class="card">
+      <div class="grid-2">
+        <div class="field col-full">
+          <label class="field-label">
+            <span class="field-num">1.28</span>
+            ¿Existe Información Producida Actualmente? <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Responda «Sí» si actualmente alguna entidad produce esta información aunque sea de manera parcial, con una desagregación diferente a la que necesita, o con una frecuencia distinta. Esto ayuda a identificar si se trata de un vacío total o de una brecha en la calidad o cobertura de la información existente.</span>
+            </span>
+          </label>
+          <div class="radio-inline">
+            <label class="radio-pill" id="pill_si"><input type="radio" name="info_producida" value="Si" id="rad_si"> Sí</label>
+            <label class="radio-pill" id="pill_no"><input type="radio" name="info_producida" value="No" id="rad_no"> No</label>
+          </div>
+        </div>
+        <div class="field conditional" id="cond_1_29">
+          <label class="field-label">
+            <span class="field-num">1.29</span>
+            Entidad que Produce la Información
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Escriba el nombre completo de la entidad que actualmente produce (total o parcialmente) esta información. Ej.: «DANE – Departamento Administrativo Nacional de Estadística», «SISPRO – MinSalud», «Secretaría de Educación Municipal».</span>
+            </span>
+          </label>
+          <input type="text" name="entidad_produce" placeholder="Nombre de la entidad que actualmente genera esta información">
+        </div>
+        <div class="field conditional" id="cond_1_30">
+          <label class="field-label">
+            <span class="field-num">1.30</span>
+            Dependencia
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Indique el nombre de la dependencia, dirección, subdirección o área específica dentro de la entidad indicada en 1.29 que es responsable de generar o gestionar esta información.</span>
+            </span>
+          </label>
+          <input type="text" name="dependencia" placeholder="Nombre de la dependencia o área responsable">
+        </div>
+
+        <!-- 1.31 — Responsable temático con campos separados -->
+        <div class="field col-full">
+          <label class="field-label" style="margin-bottom:2px">
+            <span class="field-num">1.31</span>
+            Responsable Temático <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Datos de la persona que realiza este requerimiento estadístico y que puede ser contactada para aclarar dudas técnicas sobre la demanda. Complete cada subcampo de forma independiente.</span>
+            </span>
+          </label>
+          <div class="person-block">
+            <div class="grid-2">
+              <div class="field">
+                <label class="field-label sub-label">Nombre completo <span class="required-star">*</span></label>
+                <input type="text" name="resp_nombre" placeholder="Ej. Ana María Torres Restrepo" required>
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Cargo <span class="required-star">*</span></label>
+                <input type="text" name="resp_cargo" placeholder="Ej. Analista de Planeación Territorial" required>
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Correo electrónico <span class="required-star">*</span></label>
+                <input type="email" name="resp_correo" placeholder="correo@municipio.gov.co" required>
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Teléfono de contacto</label>
+                <input type="tel" name="resp_telefono" placeholder="Ej. 3001234567">
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Entidad / Organización <span class="required-star">*</span></label>
+                <input type="text" name="resp_entidad" placeholder="Nombre de la entidad u organización" required>
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Dependencia / Área</label>
+                <input type="text" name="resp_dependencia" placeholder="Ej. Secretaría de Planeación – Observatorio">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══════ SECCIÓN 2 ═══════ -->
+    <div class="section-heading" style="margin-top:40px">
+      <div class="section-num">2</div>
+      <h2>Información Adicional</h2>
+    </div>
+
+    <div class="card">
+      <div class="grid-2">
+
+        <div class="field col-full">
+          <label class="field-label">
+            <span class="field-num">2.1</span>
+            Observaciones (si las hay)
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Si necesita ampliar, aclarar o complementar alguna respuesta del formulario, indique primero el número del campo y luego la aclaración. También puede incluir cualquier información adicional que considere relevante para entender mejor la demanda estadística. Ej.: «Campo 1.7: añadir también la variable lengua nativa para grupos étnicos indígenas».</span>
+            </span>
+          </label>
+          <textarea name="observaciones" rows="3" placeholder="Ej. Campo 1.7: incluir también la variable lengua nativa para grupos étnicos…"></textarea>
+        </div>
+
+        <!-- 2.2 — Diligenciador con campos separados -->
+        <div class="field col-full">
+          <label class="field-label" style="margin-bottom:2px">
+            <span class="field-num">2.2</span>
+            Nombre de quien hace el Diligenciamiento <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Datos de contacto de la persona que completa este formulario. Puede ser la misma persona del campo 1.31 (responsable temático) u otra diferente, como un asistente, gestor de datos o coordinador del área. Complete cada subcampo de forma independiente.</span>
+            </span>
+          </label>
+          <div class="person-block">
+            <div class="grid-2">
+              <div class="field">
+                <label class="field-label sub-label">Nombre completo <span class="required-star">*</span></label>
+                <input type="text" name="dil_nombre" placeholder="Ej. Carlos Ramírez Medina" required>
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Cargo</label>
+                <input type="text" name="dil_cargo" placeholder="Ej. Coordinador de Estadística">
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Correo electrónico <span class="required-star">*</span></label>
+                <input type="email" name="dil_correo" placeholder="correo@municipio.gov.co" required>
+              </div>
+              <div class="field">
+                <label class="field-label sub-label">Teléfono de contacto</label>
+                <input type="tel" name="dil_telefono" placeholder="Ej. 3007654321">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">2.3</span>
+            Fecha de Diligenciamiento <span class="required-star">*</span>
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Fecha en la que se completa y envía este formato. Por defecto se establece la fecha de hoy. No se pueden registrar fechas futuras.</span>
+            </span>
+          </label>
+          <input type="date" name="fecha_diligenciamiento" required>
+        </div>
+
+        <div class="field">
+          <label class="field-label">
+            <span class="field-num">2.4</span>
+            Anexos (si los hay)
+            <span class="tooltip-wrap"><i class="tooltip-icon">?</i>
+              <span class="tooltip-bubble">Describa los documentos que acompañan este requerimiento: estudios previos, tablas de datos, reportes de brechas, etc. Si son enlaces en línea, puede copiarlos aquí. Ej.: «Informe de necesidades 2023 – https://link.com/informe.pdf».</span>
+            </span>
+          </label>
+          <input type="text" name="anexos" placeholder="Descripción del anexo o enlace — https://…">
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <button type="submit" class="btn-submit" id="btnSubmit">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      <span id="btnText">Enviar Requerimiento</span>
+      <div class="spinner" id="btnSpinner"></div>
+    </button>
+
+    <div class="message message-success" id="msgSuccess">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      <div><strong>¡Requerimiento enviado correctamente!</strong><br>Su demanda estadística ha sido registrada. Gracias por contribuir al observatorio municipal.</div>
+    </div>
+    <div class="message message-error" id="msgError">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+      <div><strong>Error al enviar el requerimiento.</strong><br><span id="msgErrorDetail">Verifique su conexión e intente nuevamente.</span></div>
+    </div>
+
+  </form>
+</main>
+
+<footer>Alcaldía de La Ceja del Tambo · Observatorio Municipal · Formulario DES-FM-039-V1</footer>
+
+<script>
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUznGslrQfOfmPH3yniJG8mna4tWdVc31wHF37fUTeLYk0YFbJDd8cSTI7xNQagKhn/exec";
+
+  // ── Logo upload ──────────────────────────────────────────────
+ /* document.getElementById('logoSlot').addEventListener('click', () => {
+    document.getElementById('logoInput').click();
+  });
+  document.getElementById('logoInput').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const slot = document.getElementById('logoSlot');
+      let img = slot.querySelector('img');
+      if (!img) { img = document.createElement('img'); slot.appendChild(img); }
+      slot.querySelectorAll('svg, span').forEach(el => el.style.display = 'none');
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });*/
+
+  // ── Conditional field helpers ─────────────────────────────────
+  function toggleCond(triggerId, condId, matchVals) {
+    const t = document.getElementById(triggerId);
+    if (!t) return;
+    t.addEventListener('change', () => {
+      document.getElementById(condId).classList.toggle('visible', matchVals.includes(t.value));
+      updateProgress();
+    });
+  }
+  toggleCond('tipo_requerimiento', 'cond_1_5',  ['otro']);
+  toggleCond('uso_informacion',    'cond_1_9',  ['otro']);
+  toggleCond('posible_solucion',   'cond_1_11', ['otro']);
+  toggleCond('desag_geo',          'cond_1_23', ['otra']);
+
+  document.getElementById('req_principal').addEventListener('change', function () {
+    document.getElementById('cond_1_19').classList.toggle('visible', this.value === 'otro');
+    document.getElementById('cond_1_20').classList.toggle('visible', ['ods','ocde'].includes(this.value));
+    updateProgress();
+  });
+  document.getElementById('chk_usuario_otro').addEventListener('change', function () {
+    document.getElementById('cond_1_15').classList.toggle('visible', this.checked);
+  });
+  document.getElementById('chk_grupo_pob_otro').addEventListener('change', function () {
+    document.getElementById('cond_1_26').classList.toggle('visible', this.checked);
+  });
+  document.querySelectorAll('[name="info_producida"]').forEach(r => {
+    r.addEventListener('change', function () {
+      const si = this.value === 'Si';
+      document.getElementById('cond_1_29').classList.toggle('visible', si);
+      document.getElementById('cond_1_30').classList.toggle('visible', si);
+      document.getElementById('pill_si').classList.toggle('selected', si);
+      document.getElementById('pill_no').classList.toggle('selected', !si);
+      updateProgress();
+    });
+  });
+
+  // Checkbox visual feedback
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', function () {
+      this.closest('.check-item').classList.toggle('checked', this.checked);
+      updateProgress();
+    });
+  });
+
+  // ── Progress bar ──────────────────────────────────────────────
+  function updateProgress() {
+    const req = document.querySelectorAll('[required]');
+    let filled = 0;
+    req.forEach(el => { if (el.value && el.value.trim()) filled++; });
+    document.getElementById('progressBar').style.width =
+      (req.length ? Math.round((filled / req.length) * 100) : 0) + '%';
+  }
+  document.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('input', updateProgress);
+    el.addEventListener('change', updateProgress);
+  });
+
+  // ── Today's date ──────────────────────────────────────────────
+  const dateInput = document.querySelector('[name="fecha_diligenciamiento"]');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+    dateInput.max = today;
+  }
+
+  // ── Submit ────────────────────────────────────────────────────
+  document.getElementById('mainForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmit');
+    const spinner = document.getElementById('btnSpinner');
+    const text = document.getElementById('btnText');
+    const msgOk = document.getElementById('msgSuccess');
+    const msgErr = document.getElementById('msgError');
+    msgOk.classList.remove('show');
+    msgErr.classList.remove('show');
+
+    const req = document.querySelectorAll('[required]');
+    let invalid = false;
+    req.forEach(el => {
+      const empty = !el.value || !el.value.trim();
+      el.style.borderColor = empty ? 'var(--error)' : '';
+      if (empty && !invalid) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus(); invalid = true; }
+    });
+    if (invalid) return;
+
+    const fd = new FormData(e.target);
+    const data = { formato: 'DES-FM-039-V1' };
+    fd.forEach((v, k) => {
+      if (k.endsWith('[]')) { const key = k.slice(0,-2); data[key] = data[key] ? data[key] + ', ' + v : v; }
+      else { data[k] = v; }
     });
 
-    // Validación en tiempo real del email
-    const emailInput = form.querySelector('input[name="email"]');
-    emailInput.addEventListener('blur', function() {
-      if (this.value && !this.validity.valid) {
-        this.classList.add('border-red-500');
-      } else {
-        this.classList.remove('border-red-500');
-      }
-    });
-  </script>
+    btn.disabled = true; spinner.style.display = 'block'; text.textContent = 'Enviando…';
 
+    try {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        // 👇 CAMBIA ESTA LÍNEA 👇
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(data),
+      });
+
+      /*const text = await res.text();*/
+      console.log("Enviado (no-cors)");
+
+      msgOk.classList.add('show');
+
+      msgOk.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      e.target.reset();
+
+      document.querySelectorAll('.check-item').forEach(el => el.classList.remove('checked'));
+      document.querySelectorAll('.radio-pill').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('.conditional').forEach(el => el.classList.remove('visible'));
+    document.getElementById('progressBar').style.width = '0%';
+
+      if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+    } catch (err) {
+    console.error("ERROR REAL:", err);
+    msgErr.classList.add('show');
+    }
+    
+    finally {
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    text.textContent = 'Enviar Requerimiento';
+    }
+  });
+
+  updateProgress();
+</script>
 </body>
 </html>
